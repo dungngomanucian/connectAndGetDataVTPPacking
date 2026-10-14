@@ -14,8 +14,8 @@ from starlette.background import BackgroundTask
 
 from contracts import DASHBOARD, LOGIN, NEARBY, OUTPUTS, PAGE, PLAYBACK, REPRESENTATIVE, SESSION, USER, project
 
-API = os.environ.get('VTP_API_URL', 'http://127.0.0.1:18080').rstrip('/')
-MEDIA = os.environ.get('VTP_MEDIA_URL', API).rstrip('/')
+API = os.environ.get('VTP_API_URL', 'http://192.168.1.94:18080').rstrip('/')
+MEDIA = os.environ.get('VTP_MEDIA_URL', 'http://192.168.1.94:18000').rstrip('/')
 MEDIA_HOST = os.environ.get('VTP_MEDIA_SIGNED_HOST', urlsplit(MEDIA).netloc)
 UUID = r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
 LAYOUTS = {'overview_main', 'detail_main', 'vertical', 'horizontal', 'horizontal_40_60', 'horizontal_60_40'}

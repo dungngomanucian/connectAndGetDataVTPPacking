@@ -14,7 +14,9 @@ else
   if [ ! -x .venv/bin/python ]; then python3 -m venv .venv; fi
   .venv/bin/python -m pip install -r requirements.txt
 fi
-export VTP_MEDIA_URL="${VTP_MEDIA_URL:-http://127.0.0.1:18000}"
+export VTP_API_URL="${VTP_API_URL:-http://192.168.1.94:18080}"
+export VTP_MEDIA_SIGNED_HOST="${VTP_MEDIA_SIGNED_HOST:-192.168.1.94:18000}"
+export VTP_MEDIA_URL="${VTP_MEDIA_URL:-http://192.168.1.94:18000}"
 exec .venv/bin/python -m uvicorn server:app --host "${VTP_BIND_HOST:-127.0.0.1}" --port "${VTP_PORT:-8099}" --no-access-log
 '''
 README = '''# Dashboard mini — runtime only
