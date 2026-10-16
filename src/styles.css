@@ -1,4 +1,4 @@
-/* Hallmark · macrostructure: Control Room / Focus Rail · tone: operational clarity · anchor hue: viettel-orange */
+
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&display=swap');
 
 :root {
@@ -249,7 +249,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid rgba(236,27,48,.2
 .packing-select .dashboard-calendar .dashboard-calendar-weekday { color: #7184a1; font-size: 10px; white-space: normal; }
 .packing-date-filter .dashboard-date-trigger > span { color: #243a5c; font-size: 12px; }
 
-/* Returns: calibration workbench, using the live camera as its visual anchor. */
+
 .return-page-heading h1 { margin-top: 0; color: #173457; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -.035em; }
 .return-status-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .return-status-card { min-height: 112px; }
@@ -332,7 +332,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid rgba(236,27,48,.2
 @media (max-width: 960px) { .return-workbench { grid-template-columns: minmax(0, 1fr); align-items: start; } .return-workbench-settings, .return-workbench-settings.is-view-only { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; align-items: start; } .return-workbench-settings > header, .return-reference-inline { grid-column: 1 / -1; } .return-workbench-settings > .return-table-select { margin-bottom: 14px; } .return-setting-pair { margin-bottom: 0; } .return-settings-note, .return-workbench-settings .return-setup-note { grid-column: 1 / -1; } .return-save-configuration { grid-column: 1 / -1; } .return-reference-inline > img { max-height: clamp(120px, 22vh, 220px); } }
 @media (max-width: 640px) { .return-workbench-settings { display: block; padding: 0 0 8px; } .return-workbench-settings > .return-table-select { margin: 0 10px 12px; } .return-workbench-settings > header { margin: 0 0 8px; padding: 6px 10px; } .return-setting-pair { grid-template-columns: 1fr; margin: 0 10px; } .return-workbench-tools { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 10px 12px; } .return-workbench-tools button { min-height: 44px; padding-inline: 6px; } .return-workbench-tools > span { width: 100%; margin: 2px 0 0; } .return-save-configuration { width: calc(100% - 20px); margin: 0 10px; } .return-settings-note, .return-workbench-settings .return-setup-note { margin-right: 10px; margin-left: 10px; } .return-reference-inline { margin-right: 10px; margin-left: 10px; } .return-live-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } .return-live-summary > div:nth-child(2) { border-right: 0; } .return-live-summary > div:nth-child(-n+2) { border-bottom: 1px solid #e9eef4; } }
 
-/* Dashboard v2: compact operations board with paged table timelines. */
+
 .dashboard-v2 { grid-column: 1 / -1; min-width: 0; padding: 10px 0 20px; color: #18304e; }
 .dashboard-v2-processing-overlay { position: fixed; z-index: 500; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(19, 34, 54, .42); }
 .dashboard-v2-processing-notice { width: min(100%, 420px); padding: 26px 28px 22px; display: flex; flex-direction: column; align-items: center; color: #243a5c; background: #fff; border: 1px solid #f1dadd; border-radius: 14px; box-shadow: 0 18px 55px rgba(20, 36, 58, .24); text-align: center; }
@@ -441,7 +441,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid rgba(236,27,48,.2
 @media (max-width: 860px) { .workspace:has(.dashboard-v2) { display: block; padding: 12px 16px 24px; } .dashboard-v2-filters { flex-wrap: wrap; } .dashboard-v2-search { flex-basis: 100%; } .dashboard-v2-filter { flex: 1 1 150px; } .dashboard-v2-updated { flex-basis: 100%; margin: 0; } }
 @media (max-width: 560px) { .workspace:has(.dashboard-v2) { padding: 10px 12px 20px; } .dashboard-v2 { padding-top: 2px; } .dashboard-v2-heading { align-items: flex-start; flex-direction: column; gap: 11px; } .dashboard-v2-heading p { font-size: 12px; } .dashboard-v2-pager { align-self: stretch; justify-content: space-between; } .dashboard-v2-filters { gap: 8px; padding: 9px; } .dashboard-v2-search { min-width: 0; height: auto; min-height: 42px; flex-wrap: wrap; padding: 7px; } .dashboard-v2-search input { min-height: 30px; } .dashboard-v2-search button { height: 34px; } .dashboard-v2-filter { min-width: 0; flex-basis: calc(50% - 4px); } .dashboard-v2-apply { flex: 1; } .dashboard-v2-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; } .dashboard-v2-table { min-height: 330px; } .dashboard-v2-table-head { grid-template-columns: 23px minmax(0,1fr); gap: 6px; padding: 10px 7px; } }
 
-/* Reuse the warehouse page's outlined search and floating-label filters. */
+
 .dashboard-v2-filters { display: grid; grid-template-columns: minmax(300px,1.4fr) minmax(380px,1fr) minmax(160px,.75fr) auto auto; align-items: center; gap: 14px; margin: 0 0 17px; padding: 8px 0 12px; background: transparent; border: 0; border-radius: 0; }
 .dashboard-v2-search { height: 55px; min-width: 0; gap: 11px; padding: 0 9px 0 16px; background: #fff; border-color: #dbe4f0; border-radius: 8px; }
 .dashboard-v2-search:focus-within,.dashboard-v2-filter:focus-within { border-color: #ee8791; box-shadow: 0 0 0 3px rgba(236,27,48,.08); }
@@ -549,7 +549,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid rgba(236,27,48,.2
 .packing-date-filter .dashboard-date-trigger > span { color: inherit; font-size: inherit; }
 .packing-date-filter .dashboard-date-trigger svg { width: 15px; height: 15px; }
 
-/* Shared React dropdown: a fully styled menu instead of the browser-owned select popup. */
+
 .ui-dropdown { position: relative; min-width: 0; }
 .ui-dropdown-trigger { width: 100%; min-height: 44px; padding: 0 42px 0 12px; display: flex; align-items: center; justify-content: space-between; overflow: hidden; color: #1f395e; background: #fff; border: 1px solid #cbd9e8; border-radius: 9px; box-shadow: 0 1px 2px rgba(29, 58, 91, .035); cursor: pointer; font: inherit; font-size: 14px; font-weight: 500; line-height: 1.2; text-align: left; transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
 .ui-dropdown-trigger > span { min-width: 0; flex: 1 1 auto; display: block; overflow: visible; overflow-wrap: anywhere; text-overflow: clip; white-space: normal; }
@@ -582,7 +582,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid rgba(236,27,48,.2
 .warehouse-form-grid .ui-dropdown-trigger { min-height: 40px; }
 @keyframes ui-dropdown-reveal { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Final shared select overrides live last so every screen inherits the same control chrome. */
+
 select:not([multiple]) {
   appearance: none;
   -webkit-appearance: none;
@@ -1041,7 +1041,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
 .history-block { padding: 12px 16px; background: white; }.history-list { margin-top: 0; }.history-item { min-height: 44px; padding: 7px 0; display: flex; align-items: center; justify-content: space-between; gap: 5px; border-top: 1px solid var(--color-line); }.history-item > div { min-width: 0; display: flex; align-items: center; justify-content: space-between; flex: 1; gap: 6px; }.history-item strong { font-size: 10px; }.history-item span { color: var(--color-muted); font-size: 9px; }.history-item button { padding: 7px 9px; display: inline-flex; align-items: center; gap: 2px; color: white; background: var(--color-orange); border-radius: 5px; white-space: nowrap; font-size: 8px; font-weight: 700; }.history-item button:hover { background: var(--color-orange-dark); }.full-history { width: 100%; margin-top: 8px; padding: 9px 0 0; display: flex; justify-content: space-between; align-items: center; gap: 6px; color: var(--color-orange-dark); background: transparent; border-top: 1px solid var(--color-line); font-size: 11px; font-weight: 700; }.full-history:hover { color: var(--color-orange); }
 .history-item:first-child { border-top: 0; }
 .mobile-menu-toggle { display: none; }
-/* Typography scale: clearer type without changing the established block geometry. */
+
 .brand-lockup strong { font-size: 17px; }
 .brand-lockup span:not(.brand-divider) { font-size: 12px; }
 .connection { font-size: 13px; line-height: 1; }
@@ -1104,7 +1104,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
 .packing-search { width: min(100%, 300px); min-height: 38px; padding: 0 11px; display: flex; align-items: center; gap: 8px; color: #7184a1; background: #f7f9fc; border: 1px solid #dfe7f0; border-radius: 8px; }.packing-search svg { width: 17px; height: 17px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }.packing-search input { width: 100%; min-width: 0; color: #23395e; background: transparent; border: 0; outline: 0; font-size: 12px; }.packing-table-wrap { overflow-x: auto; }.packing-table { width: 100%; min-width: 640px; border-collapse: collapse; color: #526a8d; font-size: 13px; }.packing-table th { height: 43px; padding: 0 18px; color: #1e355a; background: #f7f9fc; font-size: 11px; font-weight: 800; text-align: left; letter-spacing: .02em; }.packing-table td { height: 56px; padding: 5px 18px; border-top: 1px solid #edf1f6; white-space: nowrap; }.packing-table tbody tr:hover { background: #fff9fa; }.packing-code { color: #274269; font-variant-numeric: tabular-nums; }.packing-status { display: inline-flex; align-items: center; gap: 7px; color: #7184a1; font-size: 12px; font-weight: 700; }.packing-status i { width: 7px; height: 7px; border-radius: 50%; background: #a4b0bf; }.packing-status.completed { color: #159b69; }.packing-status.completed i { background: #159b69; }.packing-status.progress { color: #bd7d12; }.packing-status.progress i { background: #e0a32d; }.packing-status.failed { color: #c33b4a; }.packing-status.failed i { background: #c33b4a; }.packing-table-message { height: 190px !important; padding: 28px !important; display: table-cell; color: #7184a1; text-align: center; white-space: normal !important; }.packing-table-message > * { margin: 4px; }.packing-table-message strong { display: block; color: #344d70; }.packing-table-message button { margin-left: 8px; color: var(--color-orange); background: transparent; font-weight: 700; text-decoration: underline; }
 @media (max-width: 700px) { .packing-page-content { padding: 12px 0 20px; }.packing-page-heading { align-items: stretch; flex-direction: column; gap: 14px; }.packing-refresh-button { width: fit-content; }.packing-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }.packing-orders-toolbar { align-items: stretch; flex-direction: column; }.packing-search { width: 100%; } }
 
-/* Packing gallery: order operations are organized like a media workspace. */
+
 .packing-gallery-page { max-width: none; padding: 16px 0 28px; color: #152844; }
 .packing-gallery-toolbar { display: grid; grid-template-columns: minmax(260px, 1.9fr) 130px repeat(3, minmax(112px, .7fr)) auto; gap: 8px; align-items: stretch; padding: 0 0 12px; }
 .packing-gallery-search, .packing-select, .packing-filter-button { min-height: 42px; display: flex; align-items: center; gap: 9px; border: 1px solid #e2e8f0; border-radius: 9px; background: #fff; color: #536782; font-size: 12px; }
@@ -1123,7 +1123,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
 @media (max-width: 800px) { .packing-gallery-page { padding-inline: 0; }.packing-gallery-toolbar { grid-template-columns: 1fr 1fr; }.packing-gallery-search, .packing-filter-button { grid-column: 1 / -1; }.packing-gallery-tabs { overflow-x: auto; }.packing-gallery-tabs > button:not(.packing-view-button):not(.packing-sort-button) { padding-inline: 12px; white-space: nowrap; }.packing-sort-button { display: none; }.packing-gallery-heading { padding-inline: 0; }.packing-video-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } }
 @media (max-width: 480px) { .packing-gallery-toolbar { display: flex; flex-direction: column; }.packing-select, .packing-filter-button, .packing-gallery-search { width: 100%; }.packing-gallery-heading h1 { font-size: 22px; }.packing-gallery-tabs > button:not(.packing-view-button):not(.packing-sort-button) { padding-inline: 10px; font-size: 11px; }.packing-video-title { align-items: flex-start; flex-direction: column; gap: 5px; }.packing-video-meta { flex-wrap: wrap; gap: 5px 8px; }.packing-video-meta span:last-child { margin-left: 0; }.packing-session-group.is-list .packing-video-card { grid-template-columns: 125px 1fr; } }
 
-/* Packing gallery toolbar: separate discovery from operational filters. */
+
 .packing-gallery-toolbar { display: block; margin-bottom: 18px; padding: 14px; background: #fff; border: 1px solid #e1e8f0; border-radius: 14px; box-shadow: 0 8px 24px rgba(25, 49, 81, .05); }
 .packing-gallery-toolbar-top { display: flex; align-items: stretch; gap: 10px; }
 .packing-gallery-search { min-width: 0; flex: 1; min-height: 46px; padding-left: 14px; gap: 10px; border-color: #d7e1ec; border-radius: 10px; background: #f8fafc; }
@@ -1160,7 +1160,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
 .packing-video-thumb-empty { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; align-content: center; gap: 8px; color: #d8e1eb; background: linear-gradient(145deg, #526273, #263747); font-size: 11px; font-weight: 700; }
 .packing-video-thumb-empty svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Keep unavailable return camera streams inside their own bounded preview. */
+
 .workspace.home-mode.return-workflow-page {
   display: block;
   box-sizing: border-box;
@@ -1234,7 +1234,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   .warehouse-list-panel { padding: 16px; }.warehouse-list-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }.warehouse-list-item { padding: 10px; }
 }
 
-/* Desk map adapts to its available panel width, independent of viewport/sidebar size. */
+
 .desk-management-page .warehouse-floor-panel { container-type: inline-size; }
 .desk-management-page .floor-plan-canvas { overflow: auto; overscroll-behavior: contain; padding: clamp(10px, 1.5vw, 16px); }
 .desk-management-page .floor-grid { grid-template-rows: none; grid-auto-rows: minmax(68px, auto); gap: clamp(8px, 1.2vw, 14px); align-items: stretch; align-content: start; }
@@ -1253,7 +1253,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   .desk-management-page .floor-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* Camera detail surface: dark operational focus rail. */
+
 .camera-detail-mode { display: block; min-height: calc(100vh - 66px); padding: 0; overflow: hidden; background: #0d1217; color: #f4f7f8; }
 .camera-detail-page { min-height: 0; padding: 24px 28px 30px; background: radial-gradient(circle at 52% 0%, rgba(48,69,82,.22), transparent 38%), #0d1217; }
 .camera-detail-heading { max-width: 1500px; margin: 0 auto 18px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
@@ -1342,7 +1342,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   .event-timeline::before { top: 28px; right: auto; bottom: 28px; left: 32px; width: 1px; height: auto; }
 }
 
-/* Camera detail surface: light operational theme. */
+
 .camera-detail-mode { background: var(--color-soft); color: var(--color-ink); }
 .camera-detail-page { background: var(--color-soft); }
 .camera-detail-kicker { color: var(--color-orange-dark); }
@@ -1491,7 +1491,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   .playback-close, .history-item-main button, .playback-snapshots button { transition: none; }
 }
 
-/* Detail rail rhythm: heading, overview, detail, session, history. */
+
 .detail-panel { display: flex; flex-direction: column; gap: 6px; }
 .detail-panel > .detail-header,
 .detail-panel > .selected-feed,
@@ -1532,7 +1532,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
 .camera-controls-row .live-jump.at-live { color: #72dfa9; cursor: default; }
 .camera-controls .player-expand { position: static; width: 28px; height: 28px; }
 
-/* Packing history: order code and action lead; timestamp and state stay on one calm metadata row. */
+
 .detail-panel .history-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .detail-panel .history-count { flex: 0 0 auto; color: var(--color-muted); font-size: 10px; line-height: 1; white-space: nowrap; }
 .detail-panel .history-footer { flex: 0 0 auto; display: flex; justify-content: flex-end; padding-top: 8px; }
@@ -1600,7 +1600,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   .warehouse-delete-error { margin-left: 18px; margin-right: 18px; }
 }
 
-/* Mobile header: keep identity visible while giving actions a calm, touch-friendly rail. */
+
 @media (max-width: 640px) {
   .mobile-menu-toggle {
     width: 42px;
@@ -1762,7 +1762,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
 @keyframes mobile-nav-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes mobile-nav-panel-in { from { opacity: .7; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
 
-/* Warehouse list: keep every packing table in one compact horizontal row. */
+
 .warehouse-list-grid { grid-template-columns: 1fr; gap: 8px; }
 .warehouse-list-item { min-width: 0; min-height: 48px; padding: 9px 14px; display: grid; grid-template-columns: minmax(0, 1fr) max-content max-content auto; align-items: center; gap: 12px; }
 .warehouse-list-item strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1773,7 +1773,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   .warehouse-list-item { padding: 9px 10px; gap: 8px; }
 }
 
-/* Brand red: keep actionable text, badges, and buttons on one consistent hue. */
+
 :root {
   --color-orange-dark: #ec1b30;
   --color-red: #ec1b30;
@@ -1898,7 +1898,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   background-color: #fff0f2;
 }
 
-/* Camera stream checkbox: rounded state control. */
+
 .camera-config-stream-toggle input + span { padding-left: 29px; }
 .camera-config-stream-toggle input + span::before {
   top: 50%;
@@ -1940,7 +1940,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   display: none !important;
 }
 
-/* Keep only the stream fieldset border; remove decorative section dividers. */
+
 .camera-config-item-heading,
 .camera-config-streams,
 .camera-config-item-footer {
@@ -1959,7 +1959,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   padding-top: 0;
 }
 
-/* Camera badges use the shared red brand treatment, including PIP labels. */
+
 .secondary-feed-label,
 .fullscreen-picture-in-picture > span,
 .playback-camera-label,
@@ -1989,7 +1989,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
 .packing-group-pagination button:hover:not(:disabled) { color: #fff; background: #ec1b30; border-color: #ec1b30; }
 .packing-group-pagination button:disabled { color: #111; cursor: default; opacity: .45; }
 
-/* Reporting workspace */
+
 .reports-workspace { display: block; padding: 16px 30px 36px; }
 .app-shell:has(.reports-workspace) { height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
 .app-shell:has(.reports-workspace) > .topbar { flex: 0 0 66px; }
@@ -2185,7 +2185,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   .dashboard-v2-range-separator { transform: none; }
 }
 
-/* Global settings page for camera speaker notifications. */
+
 .workspace.settings-workspace { display: block; min-height: calc(100vh - 66px); height: auto; padding: 26px clamp(18px, 3vw, 44px) 40px; overflow: visible; }
 .settings-page { width: min(100%, 1120px); margin: 0 auto; color: #18304e; }
 .settings-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
@@ -2276,7 +2276,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
 
 .packing-gallery-pagination { display: flex; justify-content: flex-end; margin-top: 10px; }
 
-/* Keep packing content from stretching the evenly spaced sidebar navigation. */
+
 @media (min-width: 641px) {
   .body-layout:has(.packing-management-page) {
     height: calc(100vh - 66px);
@@ -2316,7 +2316,7 @@ kbd { padding: 3px 6px; white-space: nowrap; color: #91a0a9; background: #f4f6f7
   .playback-pip-downloads { width: 100%; }
 }
 
-/* Keep camera downloads and merged-layout controls on separate, clear rows. */
+
 .playback-downloads { flex-direction: column; align-items: center; gap: 8px; }
 .playback-camera-downloads,
 .playback-pip-downloads { justify-content: center; }

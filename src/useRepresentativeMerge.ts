@@ -16,7 +16,7 @@ export function useRepresentativeMerge(seedId: string | null) {
       setAutomatic({seedId,state:next.automatic_state ?? null,revision:next.group_revision ?? null})
       if (!next.job) { loaded = ''; setResult(null); return }
       const key = `${next.job.id}:${next.job.version}`
-      // Keep signed URLs and video elements stable during status polling.
+
       if (loaded === key && Date.now() - loadedAt < 10 * 60 * 1000) return
       const playback = await loadMergePlayback(next.job.id, signal)
       if (!active || signal.aborted) return

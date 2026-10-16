@@ -1,4 +1,4 @@
-"""Run: .venv/bin/python -m unittest discover -s tests -v"""
+
 import unittest
 
 import httpx

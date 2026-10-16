@@ -1,4 +1,4 @@
-"""Build the VTP Packing deployment package."""
+
 from pathlib import Path
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 import hashlib
@@ -21,25 +21,25 @@ exec .venv/bin/python -m uvicorn server:app --host "${VTP_BIND_HOST:-127.0.0.1}"
 '''
 README = """# VTP Packing
 
-Ứng dụng giám sát đóng gói, tra cứu đơn hàng và báo cáo hoạt động.
+An application for monitoring packing operations, looking up orders, and reporting activity.
 
-Yêu cầu Python 3.10+ cùng uv hoặc Python venv/pip. Kết nối mạng cần thiết
-để cài dependencies lần đầu. Giải nén và chạy: bash run.sh
+Requires Python 3.10+ and either uv or Python venv/pip. Network access is required
+for the initial dependency installation. Extract the archive and run: bash run.sh
 
-Truy cập http://localhost:8099/dashboard, /packing hoặc /reports.
-Đăng nhập bằng tài khoản được cấp. Nhấn Ctrl+C để dừng ứng dụng.
+Open http://localhost:8099/dashboard, /packing, or /reports.
+Sign in with your assigned account. Press Ctrl+C to stop the application.
 
-Cấu hình bằng biến môi trường:
-- VTP_API_URL: địa chỉ dịch vụ API.
-- VTP_MEDIA_URL: địa chỉ dịch vụ media.
-- VTP_MEDIA_SIGNED_HOST: host:port dùng để ký URL media, khớp S3_PUBLIC_ENDPOINT.
-- VTP_BIND_HOST: địa chỉ lắng nghe, mặc định 127.0.0.1.
-- VTP_PORT: cổng ứng dụng, mặc định 8099.
+Configure the application using environment variables:
+- VTP_API_URL: API service URL.
+- VTP_MEDIA_URL: media service URL.
+- VTP_MEDIA_SIGNED_HOST: host:port used to sign media URLs; must match S3_PUBLIC_ENDPOINT.
+- VTP_BIND_HOST: listening address; defaults to 127.0.0.1.
+- VTP_PORT: application port; defaults to 8099.
 
-API và media phải truy cập được từ máy chạy ứng dụng. Tài khoản và quyền
-truy cập được quản lý tại dịch vụ API. Không chia sẻ thông tin đăng nhập,
-token hoặc URL media đã ký. Chạy đầy đủ gói ứng dụng để phục vụ giao diện,
-API và media; không triển khai riêng thư mục dist lên static hosting.
+The API and media services must be reachable from the application host. Accounts
+and access permissions are managed by the API service. Do not share credentials,
+tokens, or signed media URLs. Run the complete application package to serve the
+frontend, API, and media routes. Do not deploy dist alone to static hosting.
 """
 
 

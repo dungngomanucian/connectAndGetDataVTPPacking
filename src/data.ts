@@ -31,5 +31,4 @@ export type SessionSummary = {
   snapshotAvailable?: boolean
 }
 
-// Default station collection.
 export const stations: Station[] = []

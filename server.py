@@ -1,4 +1,4 @@
-"""VTP Packing application gateway."""
+
 import json
 import os
 import re
@@ -22,7 +22,7 @@ LAYOUTS = {'overview_main', 'detail_main', 'vertical', 'horizontal', 'horizontal
 SESSION_QUERY = {'q', 'table_type', 'started_from', 'started_before', 'per_table_limit',
                  'group_consecutive', 'limit', 'offset', 'table_id'}
 REPORT_QUERY = {'warehouse_id', 'table_id', 'table_type', 'started_from', 'started_before', 'q', 'timezone'}
-# Exact method + path + query allowlist. No generic forwarding to admin/internal APIs.
+
 ROUTES = [
     ('GET', r'v1/ui/reports/summary', REPORT_QUERY, REPORT_SUMMARY),
     ('GET', r'v1/ui/reports/export', REPORT_QUERY, 'video'),
@@ -83,13 +83,13 @@ async def safe_error(upstream):
     except (ValueError, AttributeError):
         pass
     await upstream.aclose()
-    # Never expose an upstream redirect/internal URL or raw exception to the browser.
+
     return JSONResponse({'detail': detail}, status_code=status if 400 <= status < 600 else 502,
                         headers={'Cache-Control': 'no-store'})
 
 
 async def public_events(upstream):
-    """Only send invalidation type, never node IDs/configuration from event payloads."""
+
     try:
         async for line in upstream.aiter_lines():
             if line.startswith(':'):
@@ -175,7 +175,7 @@ async def proxy(request: Request, path: str):
             raise HTTPException(502, 'Phản hồi dịch vụ không hợp lệ.') from None
         finally:
             await upstream.aclose()
-    # Binary media/Excel/export only. No upstream server headers, cookies or redirects.
+
     forwarded = {key: value for key, value in upstream.headers.items()
                  if key.lower() in ('content-type', 'content-disposition', 'content-range',
                                     'accept-ranges', 'etag', 'last-modified')}

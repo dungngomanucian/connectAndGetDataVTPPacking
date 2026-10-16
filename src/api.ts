@@ -1,4 +1,4 @@
-// VTP Packing API client.
+
 import { type SessionSummary, type Station } from './data'
 
 type DashboardSession = {
@@ -64,9 +64,9 @@ function localMediaUrl(url: string): string {
   try {
     const media = new URL(url)
     if (!media.pathname.startsWith('/vtp-video-evidence/')) return url
-    // The gateway serves signed object URLs on the app's origin. Keep those
-    // URLs intact; rewriting them to /media-proxy makes Vite return the app
-    // shell when the UI is opened through the gateway.
+
+
+
     if (media.origin === window.location.origin) return url
     return `/media-proxy${media.pathname}${media.search}`
   } catch {
@@ -227,7 +227,7 @@ let dashboardAuth = ''
 let dashboardPendingAuth = ''
 let dashboardPendingSignal: AbortSignal | undefined
 let dashboardLastStart = -Infinity
-/** Shared across route consumers; no duplicate full-dashboard requests. */
+
 export function loadDashboardStations(signal?: AbortSignal): Promise<DashboardData> {
   const auth = getAuthToken() ?? ''
   if (auth !== dashboardAuth) { dashboardAuth = auth; dashboardCache = undefined; dashboardCacheAt = 0 }
@@ -378,7 +378,7 @@ export function loadReportSummary(filters: ReportFilters) {
 
 export function reportExcelFilename(filters: ReportFilters) {
   const endpoint = (value: string, end = false) => {
-    // The API end is exclusive; the picker includes the selected second.
+
     const date = new Date(new Date(value).getTime() - (end ? 1000 : 0))
     const parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: filters.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -432,7 +432,7 @@ export function loadWarehouseChoice(id: string) {
 
 export async function loadReportOptions(warehouseId?: string): Promise<ReportWarehouse[]> {
   if (!warehouseId) return []
-  // The catalog endpoint returns a single warehouse object.
+
   const warehouse = await get<ReportWarehouse>(`/v1/warehouses/${encodeURIComponent(warehouseId)}/catalog`)
   return [warehouse]
 }

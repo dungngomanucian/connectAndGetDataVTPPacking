@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { loadWarehouseChoices, loadWarehouseChoice, type WarehouseChoice } from './api'
 
-/** Server-searchable selector: one page at a time, including an explicit selection. */
+
 export default function WarehousePicker({ value, onChange, allowAll = false, compact = false }: { value: string; onChange: (id: string) => void; allowAll?: boolean; compact?: boolean }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)

@@ -1,4 +1,4 @@
-"""Response schemas for the application gateway."""
+
 SESSION = {
     'id': None, 'tracking_code': None, 'status': None, 'table_id': None,
     'table_code': None, 'table_name': None, 'table_type': None,
@@ -35,7 +35,7 @@ REPORT_SUMMARY = {'orders': None, 'videos': None,
 
 
 def project(value, schema):
-    """Drop all undeclared upstream fields, including future configuration fields."""
+
     if value is None:
         return None
     if schema is None:

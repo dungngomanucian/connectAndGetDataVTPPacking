@@ -9,8 +9,8 @@ export function outputAtWall(timeline: CameraTimeline, wall: number, duration?: 
   const part = timeline.find(p => wall >= p.wall_start && wall < p.wall_end)
   if (!part) return null
   const time = part.output_start + wall - part.wall_start
-  // Remuxed camera timestamps can differ by a few milliseconds at the first frame.
-  // Clamp only this tiny negative seek; preserve genuine missing recording windows.
+
+
   const playableTime = time < 0 && time >= -.01 ? 0 : time
   return playableTime >= 0 && playableTime < part.output_end && (!Number.isFinite(duration) || playableTime < duration!) ? playableTime : null
 }

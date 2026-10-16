@@ -143,7 +143,7 @@ export default function DashboardV2Page({ onOpenPlayback, onOpenPacking }: { onO
       const stationSessions = dateSessions.filter((item) => item.table_id === String(station.id))
       const matchesText = !needle || [station.name, station.code, station.order, ...stationSessions.map((item) => item.tracking_code)].join(' ').toLocaleLowerCase('vi').includes(needle)
       const matchesType = type === 'ALL' || table?.table_type === type
-      // The selected date-time range filters sessions shown in each table, not the table list.
+
       return matchesText && matchesType
     }).map((station, originalIndex) => {
       const stationSessions = dateSessions.filter((item) => item.table_id === String(station.id))

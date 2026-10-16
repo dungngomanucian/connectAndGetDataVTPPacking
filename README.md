@@ -1,41 +1,41 @@
 # VTP Packing
 
-Ứng dụng giám sát đóng gói, tra cứu đơn hàng, xem bằng chứng hình ảnh/video và báo cáo hoạt động.
+An application for monitoring packing operations, looking up orders, reviewing image/video evidence, and reporting operational activity.
 
-## Chức năng
+## Features
 
-- **Tổng quan** (`/dashboard`): theo dõi hoạt động bàn đóng gói và truy cập các phiên liên quan.
-- **Đơn hàng** (`/packing`): tìm kiếm mã đơn/mã phiên; lọc thời gian, loại bàn, bàn và trạng thái; phân trang và cập nhật dữ liệu.
-- **Xem lại**: xem hình ảnh/video, đổi góc camera, điều khiển phát và tải video theo bố cục được hỗ trợ.
-- **Báo cáo** (`/reports`): lọc kho/bàn/thời gian/từ khóa; xem sản lượng theo ngày, hiệu suất theo bàn và biểu đồ; sắp xếp, phân trang và xuất Excel.
+- **Dashboard** (`/dashboard`): monitor packing station activity and access related sessions.
+- **Orders** (`/packing`): search by order or session code; filter by time, station type, station, and status; browse pages and refresh data.
+- **Playback**: view images and videos, switch camera angles, control playback, and download videos in supported layouts.
+- **Reports** (`/reports`): filter by warehouse, station, time, and keyword; view daily output, station performance, and charts; sort, browse pages, and export to Excel.
 
-Sidebar hỗ trợ chuyển trang; trên điện thoại, sử dụng nút menu. Báo cáo tự cập nhật mỗi 15 giây khi tab đang hiển thị.
+Use the sidebar to switch pages, or the menu button on mobile devices. Reports refresh automatically every 15 seconds while the tab is visible.
 
-## Chạy từ mã nguồn
+## Run from source
 
-Trong thư mục ứng dụng:
+From the application directory:
 
 ```bash
 bash run.sh
 ```
 
-Mở [http://localhost:8099/dashboard](http://localhost:8099/dashboard) và đăng nhập bằng tài khoản được cấp. Có thể truy cập trực tiếp `/packing` hoặc `/reports`. Nhấn **Ctrl+C** để dừng.
+Open [http://localhost:8099/dashboard](http://localhost:8099/dashboard) and sign in with your assigned account. You can also open `/packing` or `/reports` directly. Press **Ctrl+C** to stop.
 
-Script hỗ trợ Linux x86_64/ARM64 và chuẩn bị Node.js, uv cùng các dependencies cần thiết. Máy cần Python 3.10+ và kết nối mạng khi cài dependencies lần đầu.
+The script supports Linux x86_64/ARM64 and prepares Node.js, uv, and the required dependencies. Python 3.10+ and network access are required for the initial dependency installation.
 
-## Cấu hình dịch vụ
+## Service configuration
 
-Đặt biến môi trường trước khi chạy:
+Set the environment variables before starting the application:
 
-| Biến | Mặc định | Ý nghĩa |
+| Variable | Default | Description |
 | --- | --- | --- |
-| `VTP_API_URL` | `http://192.168.1.94:18080` | Địa chỉ dịch vụ API VTP. |
-| `VTP_MEDIA_URL` | `http://192.168.1.94:18000` | Địa chỉ dịch vụ media. |
-| `VTP_MEDIA_SIGNED_HOST` | `192.168.1.94:18000` | Host và port dùng khi ký URL media, khớp cấu hình `S3_PUBLIC_ENDPOINT`. |
-| `VTP_BIND_HOST` | `127.0.0.1` | Địa chỉ mạng ứng dụng lắng nghe. |
-| `VTP_PORT` | `8099` | Cổng ứng dụng. |
+| `VTP_API_URL` | `http://192.168.1.94:18080` | VTP API service URL. |
+| `VTP_MEDIA_URL` | `http://192.168.1.94:18000` | Media service URL. |
+| `VTP_MEDIA_SIGNED_HOST` | `192.168.1.94:18000` | Host and port used to sign media URLs; must match `S3_PUBLIC_ENDPOINT`. |
+| `VTP_BIND_HOST` | `127.0.0.1` | Network interface on which the application listens. |
+| `VTP_PORT` | `8099` | Application port. |
 
-Ví dụ triển khai trên máy có thể kết nối API và media:
+Example deployment on a machine that can reach the API and media services:
 
 ```bash
 VTP_API_URL="http://192.168.1.94:18080" \
@@ -45,27 +45,27 @@ VTP_BIND_HOST="0.0.0.0" \
 bash run.sh
 ```
 
-Truy cập `http://<dia-chi-may-chu>:8099/dashboard`. Thay các địa chỉ dịch vụ theo môi trường triển khai. API và media phải truy cập được từ máy chạy ứng dụng; signed host phải khớp host/port dùng để ký URL để video hoạt động đúng.
+Open `http://<server-address>:8099/dashboard`. Replace the service addresses with those for your deployment environment. The API and media services must be reachable from the application host. The signed host must match the host and port used to sign URLs for video playback to work correctly.
 
-Tài khoản, quyền truy cập và phạm vi dữ liệu được quản lý tại dịch vụ API. Không chia sẻ thông tin đăng nhập, token hoặc URL media đã ký.
+Accounts, access permissions, and data scope are managed by the API service. Do not share credentials, tokens, or signed media URLs.
 
-## Đóng gói và triển khai
+## Packaging and deployment
 
 ```bash
 bash package.sh
 ```
 
-Gói cài đặt được tạo tại `releases/vtp-packing.zip`, kèm file checksum SHA-256. Giải nén, cấu hình các biến môi trường và chạy `bash run.sh` trong thư mục `vtp-packing/`.
+The deployment package is written to `releases/vtp-packing.zip`, with a SHA-256 checksum file alongside it. Extract the archive, configure the environment variables, and run `bash run.sh` from the `vtp-packing/` directory.
 
-Máy chạy gói cài đặt cần Python 3.10+ cùng uv hoặc venv/pip; không cần Node.js. Ứng dụng cần cả giao diện đã build và Python gateway để phục vụ các đường dẫn `/api` và `/media-proxy`; không triển khai riêng `dist/` lên static hosting.
+The deployment host requires Python 3.10+ and either uv or venv/pip; Node.js is not required. The application needs both the built frontend and the Python gateway to serve `/api` and `/media-proxy`. Do not deploy `dist/` alone to static hosting.
 
-## Kiểm tra
+## Validation
 
-Trong môi trường phát triển đã cài dependencies:
+In a development environment with dependencies installed:
 
 ```bash
 npm run build
 .venv/bin/python -m unittest discover -s tests -v
 ```
 
-Các kiểm tra tự động sử dụng dịch vụ giả lập. Trước khi vận hành, xác nhận đăng nhập, truy cập dữ liệu, phát/tải video và xuất Excel với cấu hình dịch vụ thực tế.
+Automated checks use a simulated service. Before production use, verify sign-in, data access, video playback/downloads, and Excel exports against the configured services.

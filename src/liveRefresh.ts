@@ -10,7 +10,7 @@ function connect() {
   const controller = new AbortController()
   const current = { close: () => controller.abort() }
   stream = current
-  // Fetch streaming supports Authorization; never put login tokens in URLs/logs.
+
   void (async () => {
     try {
       const token = getAuthToken()
@@ -32,11 +32,11 @@ function connect() {
           while ((newline = buffer.indexOf('\n')) >= 0) {
             const line = buffer.slice(0, newline).trim(); buffer = buffer.slice(newline + 1)
             if (!line.startsWith('data:')) continue
-            try { const event = JSON.parse(line.slice(5)); listeners.forEach(listener => listener(event)) } catch { /* malformed event */ }
+            try { const event = JSON.parse(line.slice(5)); listeners.forEach(listener => listener(event)) } catch {  }
           }
         }
       } finally { await reader.cancel().catch(() => {}); reader.releaseLock() }
-    } catch { /* polling continues; reconnect below */ }
+    } catch {  }
     finally {
       if (stream === current) {
         stream = null; clearTimeout(reconnect)
@@ -61,7 +61,7 @@ export function subscribeEvents(listener: (event: LiveEvent) => void) {
   }
 }
 
-/** One in-flight task, coalesced notifications, visibility pause and error backoff. */
+
 export function watchRefresh(task: (signal: AbortSignal) => Promise<void>, options: {
   accepts?: (event: LiveEvent) => boolean; interval?: number
 } = {}) {

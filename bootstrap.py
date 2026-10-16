@@ -1,4 +1,4 @@
-"""Prepare local Node.js and uv without root, pip, venv packages or Docker."""
+
 import hashlib
 import os
 from pathlib import Path
@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parent / '.tools'
 ROOT.mkdir(exist_ok=True)
 ARCH = {'x86_64': ('x64', 'x86_64'), 'aarch64': ('arm64', 'aarch64')}.get(platform.machine())
 if platform.system() != 'Linux' or ARCH is None:
-    raise SystemExit('Script tự cài hỗ trợ Linux x86_64/ARM64. Hãy cài Node.js 22+ và uv cho máy này.')
+    raise SystemExit('Automatic setup supports Linux x86_64/ARM64. Install Node.js 22+ and uv for this machine.')
 
 
 def download(url, path):
@@ -22,12 +22,12 @@ def download(url, path):
 
 
 def extract(archive, target):
-    # Only unpack regular files and directories within the temporary directory.
+
     with tarfile.open(archive) as bundle:
         for member in bundle.getmembers():
             resolved = (target / member.name).resolve()
             if target.resolve() not in resolved.parents:
-                raise RuntimeError('Đường dẫn không hợp lệ trong gói công cụ.')
+                raise RuntimeError('Invalid path in the tool archive.')
             if not (member.isfile() or member.isdir()):
                 continue
             bundle.extract(member, target)
@@ -41,7 +41,7 @@ if node_cmd and shutil.which('npm', path=str(ROOT / 'node' / 'bin') + os.pathsep
     major, minor, *_ = map(int, version.split('.'))
     node_ok = (major == 22 and minor >= 12) or major >= 24
 if not node_ok:
-    print('Đang chuẩn bị Node.js 22 trong vtp-packing/.tools…', flush=True)
+    print('Preparing Node.js 22 in vtp-packing/.tools…', flush=True)
     base = 'https://nodejs.org/dist/latest-v22.x/'
     with urllib.request.urlopen(base + 'SHASUMS256.txt', timeout=120) as response:
         lines = response.read().decode().splitlines()
@@ -51,7 +51,7 @@ if not node_ok:
         archive = temp / filename
         download(base + filename, archive)
         if hashlib.sha256(archive.read_bytes()).hexdigest() != checksum:
-            raise RuntimeError('Checksum Node.js không khớp.')
+            raise RuntimeError('Node.js checksum mismatch.')
         extract(archive, temp)
         destination = ROOT / 'node'
         if destination.exists():
@@ -61,7 +61,7 @@ if not node_ok:
             (destination / 'bin' / command).symlink_to(f'../lib/node_modules/npm/bin/{command}-cli.js')
 
 if not (ROOT / 'uv' / 'uv').exists() and not shutil.which('uv'):
-    print('Đang chuẩn bị uv trong vtp-packing/.tools…', flush=True)
+    print('Preparing uv in vtp-packing/.tools…', flush=True)
     package = f'uv-{ARCH[1]}-unknown-linux-gnu'
     with tempfile.TemporaryDirectory(dir=ROOT) as temporary:
         temp = Path(temporary)
