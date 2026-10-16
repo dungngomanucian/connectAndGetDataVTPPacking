@@ -26,7 +26,7 @@ An application for monitoring packing operations, looking up orders, and reporti
 Requires Python 3.10+ and either uv or Python venv/pip. Network access is required
 for the initial dependency installation. Extract the archive and run: bash run.sh
 
-Open http://localhost:8099/dashboard, /packing, or /reports.
+Open http://localhost:8099/dashboard, /warehouse, /live, /packing, /reports, or /settings.
 Sign in with your assigned account. Press Ctrl+C to stop the application.
 
 Configure the application using environment variables:
@@ -35,6 +35,14 @@ Configure the application using environment variables:
 - VTP_MEDIA_SIGNED_HOST: host:port used to sign media URLs; must match S3_PUBLIC_ENDPOINT.
 - VTP_BIND_HOST: listening address; defaults to 127.0.0.1.
 - VTP_PORT: application port; defaults to 8099.
+- VTP_HLS_URL: HLS service URL; defaults to http://192.168.1.94:18888.
+- VTP_WHEP_URL: WebRTC/WHEP service URL; defaults to http://192.168.1.94:18889.
+- VTP_LIVE_AUTHORIZATION: optional server-side media Authorization header.
+- VTP_LIVE_USERNAME and VTP_LIVE_PASSWORD: media viewer credentials.
+
+Service settings can also be placed in .env in the application directory.
+Process environment variables take precedence. Restart after configuration changes.
+Excel export requires the API endpoint /api/v1/ui/reports/export-public.
 
 The API and media services must be reachable from the application host. Accounts
 and access permissions are managed by the API service. Do not share credentials,
@@ -51,7 +59,7 @@ def package(destination=None):
     for path in files:
         if path.is_symlink() or ROOT not in path.resolve().parents:
             raise RuntimeError('Cannot package symlinks or files outside the application.')
-        allowed = ('.html', '.js', '.css', '.svg', '.jpg', '.png', '.woff', '.woff2', '.ico') if path.relative_to(ROOT).parts[0] == 'dist' else ('.py', '.txt')
+        allowed = ('.html', '.js', '.css', '.svg', '.jpg', '.png', '.woff', '.woff2', '.ico', '.mp3') if path.relative_to(ROOT).parts[0] == 'dist' else ('.py', '.txt')
         if path.suffix not in allowed:
             raise RuntimeError('Unexpected deployment artifact: ' + path.name)
     destination = destination or ROOT / 'releases/vtp-packing.zip'

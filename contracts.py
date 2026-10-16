@@ -8,7 +8,8 @@ SESSION = {
 }
 USER = {'id': None, 'username': None, 'full_name': None, 'role': None, 'enabled': None}
 TABLE = {'id': None, 'code': None, 'name': None, 'enabled': None, 'table_type': None,
-         'status': None, 'activity': None, 'current_session': SESSION}
+         'status': None, 'activity': None, 'current_session': SESSION,
+         'cameras': {'overview': {'enabled': None, 'webrtc_url': None}, 'detail': {'enabled': None, 'webrtc_url': None}}}
 DASHBOARD = {'warehouses': [{'id': None, 'code': None, 'name': None, 'tables': [TABLE]}]}
 PAGE = {'items': [SESSION], 'total': None, 'limit': None, 'offset': None}
 NEARBY = {**PAGE, 'seed': SESSION}
@@ -32,6 +33,18 @@ REPORT_SUMMARY = {'orders': None, 'videos': None,
                   'tables': [{'table_id': None, 'table_code': None, 'table_name': None,
                               'table_type': None, 'warehouse_id': None, 'warehouse_name': None,
                               'orders': None, 'videos': None}]}
+
+WAREHOUSE_RECORD = {key: None for key in ('id', 'created_at', 'code', 'name', 'enabled', 'version', 'province', 'address', 'updated_at', 'sort_order')}
+WAREHOUSE_LIST = {'items': [{**WAREHOUSE_RECORD, 'camera_total': None, 'camera_enabled': None, 'status': None}], 'total': None, 'limit': None, 'offset': None}
+WAREHOUSE_DESKS = {'id': None, 'code': None, 'name': None, 'enabled': None,
+                   'tables': [{'id': None, 'code': None, 'name': None, 'table_type': None,
+                               'enabled': None, 'status': None, 'activity': None,
+                               'current_session': {'id': None, 'tracking_code': None, 'status': None}}]}
+DELETED = {'id': None, 'deleted': None}
+
+AUDIO_ASSET = {key: None for key in ('event_type', 'version', 'configured', 'filename', 'media_type', 'duration_seconds', 'size_bytes')}
+AUDIO_SETTINGS = {'assets': {'start': AUDIO_ASSET, 'end': AUDIO_ASSET}}
+SESSION_TIMEOUT = {'version': None, 'max_session_seconds': None, 'max_session_minutes': None}
 
 
 def project(value, schema):

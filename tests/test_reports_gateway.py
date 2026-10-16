@@ -14,7 +14,7 @@ class ReportsGatewayTests(unittest.IsolatedAsyncioTestCase):
         def upstream(request):
             self.requests.append(request)
             path = request.url.path
-            if path.endswith('/export'):
+            if path.endswith('/export-public'):
                 return httpx.Response(200, content=b'xlsx-upstream-bytes', headers={
                     'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                     'Content-Disposition': 'attachment; filename="report.xlsx"'})
@@ -54,7 +54,7 @@ class ReportsGatewayTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.requests[-1].headers['authorization'], 'Bearer test')
 
     async def test_excel_passes_through_without_local_generation(self):
-        response = await self.client.get('/api/v1/ui/reports/export?timezone=Asia%2FHo_Chi_Minh')
+        response = await self.client.get('/api/v1/ui/reports/export-public?timezone=Asia%2FHo_Chi_Minh')
         self.assertEqual(response.content, b'xlsx-upstream-bytes')
         self.assertIn('spreadsheetml', response.headers['content-type'])
         self.assertIn('report.xlsx', response.headers['content-disposition'])
@@ -73,7 +73,12 @@ class ReportsGatewayTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status_code, 401)
         response = await self.client.get('/api/v1/ui/reports/summary?internal=true')
         self.assertEqual(response.status_code, 400)
-        response = await self.client.post('/api/v1/ui/reports/export')
+        response = await self.client.post('/api/v1/ui/reports/export-public')
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(self.requests, [])
+
+    async def test_internal_export_is_blocked(self):
+        response = await self.client.get('/api/v1/ui/reports/export')
         self.assertEqual(response.status_code, 403)
         self.assertEqual(self.requests, [])
 

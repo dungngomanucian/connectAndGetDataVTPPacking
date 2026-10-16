@@ -17,6 +17,7 @@ type DashboardSession = {
 export type DashboardTable = {
   id: string; code: string; name: string; enabled: boolean; table_type: string;
   status: 'ONLINE' | 'OFFLINE'; activity: 'BUSY' | 'ARMED' | 'IDLE';
+  cameras?: { overview?: { enabled?: boolean; webrtc_url?: string }; detail?: { enabled?: boolean; webrtc_url?: string } };
   current_session?: DashboardSession | null;
 }
 export type DashboardWarehouse = { id: string; code: string; name: string; tables: DashboardTable[] }
@@ -399,7 +400,7 @@ export function reportExcelFilename(filters: ReportFilters) {
 
 export async function downloadReportExcel(filters: ReportFilters) {
   const token = getAuthToken()
-  const response = await fetch(`${API_BASE_URL}/v1/ui/reports/export?${reportParams(filters)}`, {
+  const response = await fetch(`${API_BASE_URL}/v1/ui/reports/export-public?${reportParams(filters)}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   })
   if (!response.ok) {
@@ -435,4 +436,211 @@ export async function loadReportOptions(warehouseId?: string): Promise<ReportWar
 
   const warehouse = await get<ReportWarehouse>(`/v1/warehouses/${encodeURIComponent(warehouseId)}/catalog`)
   return [warehouse]
+}
+
+export type WarehouseListItem = {
+  id: string
+  created_at: string
+  code: string
+  name: string
+  enabled: boolean
+  version: number
+  province?: string | null
+  address?: string | null
+  updated_at: string
+  sort_order: number
+  camera_total: number
+  camera_enabled: number
+  status: 'ACTIVE' | 'WARNING' | 'PAUSED'
+}
+
+export type WarehouseRecord = Omit<WarehouseListItem, 'camera_total' | 'camera_enabled' | 'status'>
+
+export type WorkerNodeListItem = { id: string; code: string; name: string; enabled: boolean }
+
+export type WarehouseListResponse = {
+  items: WarehouseListItem[]
+  total: number
+  offset: number
+  limit: number
+}
+
+export type WarehouseCreateInput = {
+  code: string
+  name: string
+  province?: string
+  address?: string
+  enabled?: boolean
+  sort_order?: number
+}
+
+export type WarehouseUpdateInput = {
+  expected_version: number
+  name?: string
+  province?: string
+  address?: string
+  enabled?: boolean
+}
+
+
+export function loadWarehouses(params: { q?: string; province?: string; status?: string; offset?: number; limit?: number } = {}, signal?: AbortSignal) {
+  const query = new URLSearchParams()
+  if (params.q?.trim()) query.set('q', params.q.trim())
+  if (params.province) query.set('province', params.province)
+  if (params.status) query.set('status', params.status)
+  if (params.offset !== undefined) query.set('offset', String(params.offset))
+  if (params.limit !== undefined) query.set('limit', String(params.limit))
+  return get<WarehouseListResponse>(`/v1/warehouses/list?${query.toString()}`, signal)
+}
+
+
+export function createWarehouse(input: WarehouseCreateInput) {
+  return post<WarehouseRecord>('/v1/warehouses', input)
+}
+
+export function deleteWarehouse(id: string) {
+  return remove<{ id: string; deleted: boolean }>(`/v1/warehouses/${encodeURIComponent(id)}`)
+}
+
+export function updateWarehouse(id: string, input: WarehouseUpdateInput) {
+  return patch<WarehouseRecord>(`/v1/warehouses/${encodeURIComponent(id)}`, input)
+}
+
+
+async function warehouseMutation<T>(method: 'POST' | 'PATCH' | 'DELETE', path: string, body?: unknown): Promise<T> {
+  const token = getAuthToken()
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  })
+  if (!response.ok) {
+    if (response.status === 401) { clearAuth(); window.dispatchEvent(new CustomEvent('vtp:unauthorized')) }
+    const messages: Record<number, string> = {403: 'Tài khoản không có quyền quản lý kho.', 409: 'Dữ liệu có xung đột hoặc kho không thể xóa. Hãy tải lại danh sách.', 422: 'Thông tin kho không hợp lệ.'}
+    throw new Error(messages[response.status] || 'Không thể xử lý yêu cầu. Vui lòng thử lại.')
+  }
+  return response.json() as Promise<T>
+}
+const post = <T>(path: string, body: unknown) => warehouseMutation<T>('POST', path, body)
+const patch = <T>(path: string, body: unknown) => warehouseMutation<T>('PATCH', path, body)
+const remove = <T>(path: string) => warehouseMutation<T>('DELETE', path)
+export type WarehouseDesk = { id: string; code: string; name: string; table_type: string; enabled: boolean; status: string; activity: string; current_session?: { id: string; tracking_code: string; status: string } | null }
+export type WarehouseDesks = { id: string; code: string; name: string; enabled: boolean; tables: WarehouseDesk[] }
+export const loadWarehouseDesks = (id: string, signal?: AbortSignal) => get<WarehouseDesks>(`/v1/ui/warehouses/${encodeURIComponent(id)}/tables`, signal)
+
+export async function deleteLiveTable(id: string): Promise<void> {
+  const token = getAuthToken()
+  const response = await fetch(`${API_BASE_URL}/v1/tables/${encodeURIComponent(id)}`, {
+    method: 'DELETE', headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+  if (!response.ok) {
+    if (response.status === 401) { clearAuth(); window.dispatchEvent(new CustomEvent('vtp:unauthorized')) }
+    const messages: Record<number, string> = {403: 'Tài khoản không có quyền xóa bàn.', 409: 'Bàn đang được sử dụng hoặc có dữ liệu liên quan, không thể xóa.', 404: 'Bàn không còn tồn tại. Hãy cập nhật danh sách.'}
+    throw new Error(messages[response.status] || 'Không thể xóa bàn. Vui lòng thử lại.')
+  }
+  dashboardCache = undefined
+  dashboardCacheAt = 0
+}
+
+export type AudioEventType = 'start' | 'end'
+export type AudioAssetInfo = {
+  event_type: AudioEventType
+  version: number
+  configured: boolean
+  filename: string | null
+  media_type: string | null
+  duration_seconds: number | null
+  size_bytes: number
+}
+export type AudioSettingsResponse = { assets: Record<AudioEventType, AudioAssetInfo> }
+export type SessionTimeoutSettings = {
+  version: number
+  max_session_seconds: number
+  max_session_minutes: number
+}
+
+export function loadAudioSettings() {
+  return get<AudioSettingsResponse>('/v1/ui/audio-settings')
+}
+
+export function loadSessionTimeout() {
+  return get<SessionTimeoutSettings>('/v1/ui/session-timeout')
+}
+
+export function updateSessionTimeout(maxSessionMinutes: number, expectedVersion: number) {
+  return put<SessionTimeoutSettings>('/v1/ui/session-timeout', {
+    max_session_minutes: maxSessionMinutes,
+    expected_version: expectedVersion,
+  })
+}
+
+export async function loadAudioSettingFile(eventType: AudioEventType): Promise<Blob> {
+  const token = getAuthToken()
+  const headers: Record<string, string> = {}
+  if (token) headers.Authorization = `Bearer ${token}`
+  const path = `/v1/ui/audio-settings/${eventType}/file`
+  const response = await fetch(`${API_BASE_URL}${path}`, { headers })
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({})) as { detail?: string }
+    if (response.status === 401) {
+      clearAuth()
+      window.dispatchEvent(new CustomEvent('vtp:unauthorized'))
+    }
+    throw new Error(errorData.detail || `API ${response.status}: ${path}`)
+  }
+  return response.blob()
+}
+
+export async function uploadAudioSetting(eventType: AudioEventType, file: File, expectedVersion: number) {
+  const token = getAuthToken()
+  const form = new FormData()
+  form.set('expected_version', String(expectedVersion))
+  form.set('file', file)
+  const path = `/v1/ui/audio-settings/${eventType}`
+  const headers: Record<string, string> = {}
+  if (token) headers.Authorization = `Bearer ${token}`
+  const response = await fetch(`${API_BASE_URL}${path}`, { method: 'PUT', headers, body: form })
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({})) as { detail?: string | { error?: string; version?: number } }
+    if (response.status === 401) {
+      clearAuth()
+      window.dispatchEvent(new CustomEvent('vtp:unauthorized'))
+    }
+    const detail = typeof errorData.detail === 'object'
+      ? errorData.detail.error === 'version_conflict' ? 'Âm thanh đã được cập nhật ở nơi khác. Hãy tải lại cài đặt.' : undefined
+      : errorData.detail
+    throw new Error(detail || `API ${response.status}: ${path}`)
+  }
+  return response.json() as Promise<AudioAssetInfo>
+}
+
+export async function resetAudioSetting(eventType: AudioEventType, expectedVersion: number) {
+  const token = getAuthToken()
+  const path = `/v1/ui/audio-settings/${eventType}?expected_version=${expectedVersion}`
+  const headers: Record<string, string> = {}
+  if (token) headers.Authorization = `Bearer ${token}`
+  const response = await fetch(`${API_BASE_URL}${path}`, { method: 'DELETE', headers })
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({})) as { detail?: string | { error?: string; version?: number } }
+    if (response.status === 401) {
+      clearAuth()
+      window.dispatchEvent(new CustomEvent('vtp:unauthorized'))
+    }
+    const detail = typeof errorData.detail === 'object'
+      ? errorData.detail.error === 'version_conflict' ? 'Âm thanh đã được cập nhật ở nơi khác. Hãy tải lại cài đặt.' : undefined
+      : errorData.detail
+    throw new Error(detail || `API ${response.status}: ${path}`)
+  }
+  return response.json() as Promise<AudioAssetInfo>
+}
+
+
+async function put<T>(path: string, body: unknown): Promise<T> {
+  const token = getAuthToken()
+  const response = await fetch(`${API_BASE_URL}${path}`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...(token ? {Authorization: `Bearer ${token}`} : {}) }, body: JSON.stringify(body) })
+  if (!response.ok) {
+    if (response.status === 401) { clearAuth(); window.dispatchEvent(new CustomEvent('vtp:unauthorized')) }
+    if (response.status === 409) throw new Error('Cài đặt đã thay đổi ở nơi khác. Hãy tải lại.')
+    throw new Error('Không thể lưu cài đặt. Kiểm tra quyền truy cập và dữ liệu nhập.')
+  }
+  return response.json() as Promise<T>
 }
