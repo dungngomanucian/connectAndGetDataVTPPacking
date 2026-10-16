@@ -1,4 +1,4 @@
-"""Dashboard-only gateway. All business processing remains on the main VTP server."""
+"""VTP Packing application gateway."""
 import json
 import os
 import re
@@ -12,7 +12,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response, StreamingRes
 from fastapi.staticfiles import StaticFiles
 from starlette.background import BackgroundTask
 
-from contracts import DASHBOARD, LOGIN, NEARBY, OUTPUTS, PAGE, PLAYBACK, REPRESENTATIVE, SESSION, USER, project
+from contracts import DASHBOARD, LOGIN, NEARBY, OUTPUTS, PAGE, PLAYBACK, REPRESENTATIVE, SESSION, USER, REPORT_SUMMARY, REPORT_WAREHOUSE, WAREHOUSE_CHOICE, WAREHOUSE_PAGE, project
 
 API = os.environ.get('VTP_API_URL', 'http://192.168.1.94:18080').rstrip('/')
 MEDIA = os.environ.get('VTP_MEDIA_URL', 'http://192.168.1.94:18000').rstrip('/')
@@ -21,8 +21,14 @@ UUID = r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]
 LAYOUTS = {'overview_main', 'detail_main', 'vertical', 'horizontal', 'horizontal_40_60', 'horizontal_60_40'}
 SESSION_QUERY = {'q', 'table_type', 'started_from', 'started_before', 'per_table_limit',
                  'group_consecutive', 'limit', 'offset', 'table_id'}
+REPORT_QUERY = {'warehouse_id', 'table_id', 'table_type', 'started_from', 'started_before', 'q', 'timezone'}
 # Exact method + path + query allowlist. No generic forwarding to admin/internal APIs.
 ROUTES = [
+    ('GET', r'v1/ui/reports/summary', REPORT_QUERY, REPORT_SUMMARY),
+    ('GET', r'v1/ui/reports/export', REPORT_QUERY, 'video'),
+    ('GET', r'v1/ui/warehouses/page', {'q', 'limit', 'offset'}, WAREHOUSE_PAGE),
+    ('GET', rf'v1/ui/warehouses/{UUID}/choice', set(), WAREHOUSE_CHOICE),
+    ('GET', rf'v1/warehouses/{UUID}/catalog', set(), REPORT_WAREHOUSE),
     ('POST', r'v1/auth/login', set(), LOGIN),
     ('GET', r'v1/auth/me', set(), USER),
     ('GET', r'v1/ui/dashboard', set(), DASHBOARD),
@@ -52,7 +58,7 @@ def route_contract(method, path):
     for allowed_method, pattern, query, schema in ROUTES:
         if method == allowed_method and re.fullmatch(pattern, path):
             return query, schema
-    raise HTTPException(403, 'API này không được phép sử dụng trong dashboard mini.')
+    raise HTTPException(403, 'API này không được phép sử dụng trong ứng dụng.')
 
 
 def check_authorization(request):
@@ -68,7 +74,7 @@ async def safe_error(upstream):
                 403: 'Tài khoản không có quyền truy cập.', 404: 'Không tìm thấy dữ liệu.',
                 409: 'Video chưa sẵn sàng.', 422: 'Yêu cầu không hợp lệ.',
                 429: 'Quá nhiều yêu cầu. Vui lòng thử lại.'}
-    detail = messages.get(status, 'Hệ thống chính chưa xử lý được yêu cầu.')
+    detail = messages.get(status, 'Dịch vụ API chưa xử lý được yêu cầu.')
     try:
         payload = json.loads(await upstream.aread())
         code = payload.get('detail', {}).get('code') if isinstance(payload.get('detail'), dict) else None
@@ -111,7 +117,7 @@ async def proxy(request: Request, path: str):
         signed_v4 = bool(request.query_params.get('X-Amz-Signature'))
         signed_v2 = all(request.query_params.get(key) for key in ('AWSAccessKeyId', 'Signature', 'Expires'))
         if not (signed_v4 or signed_v2):
-            raise HTTPException(403, 'Cần link video đã ký từ hệ thống chính.')
+            raise HTTPException(403, 'Cần link video đã ký từ dịch vụ.')
         target, schema = MEDIA + '/' + path, 'video'
         body = b''
         headers = {key: value for key, value in request.headers.items()
@@ -152,7 +158,7 @@ async def proxy(request: Request, path: str):
         upstream = await app.state.client.send(app.state.client.build_request(
             request.method, target, headers=headers, content=body), stream=True)
     except httpx.RequestError:
-        raise HTTPException(502, 'Không kết nối được hệ thống chính.') from None
+        raise HTTPException(502, 'Không kết nối được dịch vụ.') from None
     if media and upstream.status_code == 304:
         await upstream.aclose()
         return Response(status_code=304, headers={'Cache-Control': 'no-store'})
@@ -166,10 +172,10 @@ async def proxy(request: Request, path: str):
             data = json.loads(await upstream.aread())
             return JSONResponse(project(data, schema), headers={'Cache-Control': 'no-store'})
         except ValueError:
-            raise HTTPException(502, 'Phản hồi hệ thống chính không hợp lệ.') from None
+            raise HTTPException(502, 'Phản hồi dịch vụ không hợp lệ.') from None
         finally:
             await upstream.aclose()
-    # Binary media/export only. No upstream server headers, cookies or redirects.
+    # Binary media/Excel/export only. No upstream server headers, cookies or redirects.
     forwarded = {key: value for key, value in upstream.headers.items()
                  if key.lower() in ('content-type', 'content-disposition', 'content-range',
                                     'accept-ranges', 'etag', 'last-modified')}
@@ -181,6 +187,10 @@ async def proxy(request: Request, path: str):
 DIST = Path(__file__).parent / 'dist'
 
 
+@app.get('/reports', include_in_schema=False)
+@app.get('/reports/', include_in_schema=False)
+@app.get('/packing', include_in_schema=False)
+@app.get('/packing/', include_in_schema=False)
 @app.get('/dashboard', include_in_schema=False)
 @app.get('/dashboard/', include_in_schema=False)
 def dashboard():

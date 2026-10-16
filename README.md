@@ -1,55 +1,41 @@
-# VTP Packing Dashboard
+# VTP Packing
 
-A lightweight dashboard for viewing packing sessions and video evidence from an existing VTP installation. The application provides a focused interface for dashboard and playback workflows; authentication, business data, and access permissions remain managed by the main VTP system.
+Ứng dụng giám sát đóng gói, tra cứu đơn hàng, xem bằng chứng hình ảnh/video và báo cáo hoạt động.
 
-## Run the application
+## Chức năng
 
-From the project root, run:
+- **Tổng quan** (`/dashboard`): theo dõi hoạt động bàn đóng gói và truy cập các phiên liên quan.
+- **Đơn hàng** (`/packing`): tìm kiếm mã đơn/mã phiên; lọc thời gian, loại bàn, bàn và trạng thái; phân trang và cập nhật dữ liệu.
+- **Xem lại**: xem hình ảnh/video, đổi góc camera, điều khiển phát và tải video theo bố cục được hỗ trợ.
+- **Báo cáo** (`/reports`): lọc kho/bàn/thời gian/từ khóa; xem sản lượng theo ngày, hiệu suất theo bàn và biểu đồ; sắp xếp, phân trang và xuất Excel.
+
+Sidebar hỗ trợ chuyển trang; trên điện thoại, sử dụng nút menu. Báo cáo tự cập nhật mỗi 15 giây khi tab đang hiển thị.
+
+## Chạy từ mã nguồn
+
+Trong thư mục ứng dụng:
 
 ```bash
 bash run.sh
 ```
 
-Open [http://localhost:8099/dashboard](http://localhost:8099/dashboard) and sign in with your existing VTP account. Press **Ctrl+C** in the terminal to stop the application.
-## Connect to a running VTP installation
+Mở [http://localhost:8099/dashboard](http://localhost:8099/dashboard) và đăng nhập bằng tài khoản được cấp. Có thể truy cập trực tiếp `/packing` hoặc `/reports`. Nhấn **Ctrl+C** để dừng.
 
-The dashboard connects to an existing VTP API and media service. Configure these environment variables before running `run.sh`:
+Script hỗ trợ Linux x86_64/ARM64 và chuẩn bị Node.js, uv cùng các dependencies cần thiết. Máy cần Python 3.10+ và kết nối mạng khi cài dependencies lần đầu.
 
-| Variable | Default | Description |
+## Cấu hình dịch vụ
+
+Đặt biến môi trường trước khi chạy:
+
+| Biến | Mặc định | Ý nghĩa |
 | --- | --- | --- |
-| `VTP_API_URL` | `http://192.168.1.94:18080` | Base URL of the main VTP API. |
-| `VTP_MEDIA_URL` | `http://192.168.1.94:18000` | Base URL of the video/media gateway or MinIO service. |
-| `VTP_MEDIA_SIGNED_HOST` | `192.168.1.94:18000` | Host and port used in `S3_PUBLIC_ENDPOINT`; must match the host used to sign media URLs. |
-| `VTP_BIND_HOST` | `127.0.0.1` | Network interface on which the dashboard server listens. |
-| `VTP_PORT` | `8099` | Port on which the dashboard server listens. |
+| `VTP_API_URL` | `http://192.168.1.94:18080` | Địa chỉ dịch vụ API VTP. |
+| `VTP_MEDIA_URL` | `http://192.168.1.94:18000` | Địa chỉ dịch vụ media. |
+| `VTP_MEDIA_SIGNED_HOST` | `192.168.1.94:18000` | Host và port dùng khi ký URL media, khớp cấu hình `S3_PUBLIC_ENDPOINT`. |
+| `VTP_BIND_HOST` | `127.0.0.1` | Địa chỉ mạng ứng dụng lắng nghe. |
+| `VTP_PORT` | `8099` | Cổng ứng dụng. |
 
-For example:
-
-```bash
-VTP_API_URL="http://192.168.1.94:18080" \
-VTP_MEDIA_URL="http://192.168.1.94:18000" \
-VTP_MEDIA_SIGNED_HOST="192.168.1.94:18000" \
-bash run.sh
-```
-
-The API and media endpoints must be reachable from the machine running this application. The signed media host must match the host and port configured by the VTP media service so that signed video URLs remain valid.
-
-## Build a release package
-
-To build the distributable package, run:
-
-```bash
-bash package.sh
-```
-
-
-The package is written to `releases/dashboard-mini.zip`, with a SHA-256 checksum beside it. It includes the built frontend and Python gateway, without frontend source code or Node.js dependencies.
-
-## Deploy the dashboard
-
-The current application needs both the built frontend and the Python gateway. The gateway serves the UI and forwards `/api` and `/media-proxy` requests to VTP. Uploading only `dist/` to static hosting will not provide these routes.
-
-To run from source on a Linux machine that can reach the VTP server:
+Ví dụ triển khai trên máy có thể kết nối API và media:
 
 ```bash
 VTP_API_URL="http://192.168.1.94:18080" \
@@ -59,5 +45,27 @@ VTP_BIND_HOST="0.0.0.0" \
 bash run.sh
 ```
 
-Open `http://<dashboard-server-ip>:8099/dashboard`.
+Truy cập `http://<dia-chi-may-chu>:8099/dashboard`. Thay các địa chỉ dịch vụ theo môi trường triển khai. API và media phải truy cập được từ máy chạy ứng dụng; signed host phải khớp host/port dùng để ký URL để video hoạt động đúng.
 
+Tài khoản, quyền truy cập và phạm vi dữ liệu được quản lý tại dịch vụ API. Không chia sẻ thông tin đăng nhập, token hoặc URL media đã ký.
+
+## Đóng gói và triển khai
+
+```bash
+bash package.sh
+```
+
+Gói cài đặt được tạo tại `releases/vtp-packing.zip`, kèm file checksum SHA-256. Giải nén, cấu hình các biến môi trường và chạy `bash run.sh` trong thư mục `vtp-packing/`.
+
+Máy chạy gói cài đặt cần Python 3.10+ cùng uv hoặc venv/pip; không cần Node.js. Ứng dụng cần cả giao diện đã build và Python gateway để phục vụ các đường dẫn `/api` và `/media-proxy`; không triển khai riêng `dist/` lên static hosting.
+
+## Kiểm tra
+
+Trong môi trường phát triển đã cài dependencies:
+
+```bash
+npm run build
+.venv/bin/python -m unittest discover -s tests -v
+```
+
+Các kiểm tra tự động sử dụng dịch vụ giả lập. Trước khi vận hành, xác nhận đăng nhập, truy cập dữ liệu, phát/tải video và xuất Excel với cấu hình dịch vụ thực tế.

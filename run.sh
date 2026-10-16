@@ -9,9 +9,9 @@ if [ ! -f .venv/pyvenv.cfg ] || [ ! -x .venv/bin/python ]; then
 fi
 uv pip install --python .venv/bin/python -r requirements.txt
 # Chỉ cài lại khi package-lock.json thay đổi.
-if [ ! -f node_modules/.camera-simple-lock ] || ! cmp -s package-lock.json node_modules/.camera-simple-lock; then
+if [ ! -f node_modules/.vtp-packing-lock ] || ! cmp -s package-lock.json node_modules/.vtp-packing-lock; then
   npm ci
-  cp package-lock.json node_modules/.camera-simple-lock
+  cp package-lock.json node_modules/.vtp-packing-lock
 fi
 npm run build
 export VTP_API_URL="${VTP_API_URL:-http://192.168.1.94:18080}"

@@ -41,7 +41,7 @@ if node_cmd and shutil.which('npm', path=str(ROOT / 'node' / 'bin') + os.pathsep
     major, minor, *_ = map(int, version.split('.'))
     node_ok = (major == 22 and minor >= 12) or major >= 24
 if not node_ok:
-    print('Đang chuẩn bị Node.js 22 trong camera-simple/.tools…', flush=True)
+    print('Đang chuẩn bị Node.js 22 trong vtp-packing/.tools…', flush=True)
     base = 'https://nodejs.org/dist/latest-v22.x/'
     with urllib.request.urlopen(base + 'SHASUMS256.txt', timeout=120) as response:
         lines = response.read().decode().splitlines()
@@ -61,7 +61,7 @@ if not node_ok:
             (destination / 'bin' / command).symlink_to(f'../lib/node_modules/npm/bin/{command}-cli.js')
 
 if not (ROOT / 'uv' / 'uv').exists() and not shutil.which('uv'):
-    print('Đang chuẩn bị uv trong camera-simple/.tools…', flush=True)
+    print('Đang chuẩn bị uv trong vtp-packing/.tools…', flush=True)
     package = f'uv-{ARCH[1]}-unknown-linux-gnu'
     with tempfile.TemporaryDirectory(dir=ROOT) as temporary:
         temp = Path(temporary)

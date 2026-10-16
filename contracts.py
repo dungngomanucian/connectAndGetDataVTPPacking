@@ -1,4 +1,4 @@
-"""Public view models only. No recording, detection or rendering logic belongs here."""
+"""Response schemas for the application gateway."""
 SESSION = {
     'id': None, 'tracking_code': None, 'status': None, 'table_id': None,
     'table_code': None, 'table_name': None, 'table_type': None,
@@ -22,6 +22,16 @@ TIMELINE = {'output_start': None, 'output_end': None, 'wall_start': None, 'wall_
 OUTPUTS = {'outputs': [{'camera': None, 'labels': [None], 'url': None,
                         'download_url': None, 'timeline': [TIMELINE]}]}
 LOGIN = {'access_token': None, 'token_type': None, 'user': USER}
+
+WAREHOUSE_CHOICE = {'id': None, 'name': None, 'enabled': None}
+WAREHOUSE_PAGE = {'items': [WAREHOUSE_CHOICE], 'total': None, 'limit': None, 'offset': None}
+REPORT_WAREHOUSE = {'id': None, 'code': None, 'name': None,
+                    'tables': [{'id': None, 'code': None, 'name': None, 'table_type': None}]}
+REPORT_SUMMARY = {'orders': None, 'videos': None,
+                  'daily': [{'date': None, 'orders': None, 'videos': None}],
+                  'tables': [{'table_id': None, 'table_code': None, 'table_name': None,
+                              'table_type': None, 'warehouse_id': None, 'warehouse_name': None,
+                              'orders': None, 'videos': None}]}
 
 
 def project(value, schema):

@@ -1,4 +1,4 @@
-// Dashboard-only HTTP client; all business processing stays on the main server.
+// VTP Packing API client.
 import { type SessionSummary, type Station } from './data'
 
 type DashboardSession = {
@@ -349,3 +349,90 @@ export async function loadMergePlayback(id: string, signal?: AbortSignal) {
 }
 export type NearbySessionPage = Omit<SessionPage, "items"> & { items: PackingSession[]; seed: { id: string; tracking_code: string; table_id: string; warehouse_id: string; table_type: string; started_at: string } }
 export const loadNearbySessions = (seedId: string, offset = 0, signal?: AbortSignal) => get<NearbySessionPage>('/v1/ui/sessions/' + encodeURIComponent(seedId) + '/nearby?limit=20&offset=' + offset, signal)
+
+export type ReportWarehouse = { id: string; code: string; name: string; tables: { id: string; code: string; name: string; table_type: string }[] }
+export type ReportSummary = {
+  orders: number
+  videos: number
+  daily: { date: string; orders: number; videos: number }[]
+  tables: { table_id: string; table_code: string; table_name: string; table_type: string; warehouse_id: string; warehouse_name: string; orders: number; videos: number }[]
+}
+
+export type ReportFilters = { warehouseId?: string; tableId?: string; tableType?: string; startedFrom?: string; startedBefore?: string; query?: string; timezone?: string }
+
+function reportParams(filters: ReportFilters) {
+  const params = new URLSearchParams()
+  if (filters.warehouseId) params.set('warehouse_id', filters.warehouseId)
+  if (filters.tableId) params.set('table_id', filters.tableId)
+  if (filters.tableType) params.set('table_type', filters.tableType)
+  if (filters.startedFrom) params.set('started_from', filters.startedFrom)
+  if (filters.startedBefore) params.set('started_before', filters.startedBefore)
+  if (filters.query?.trim()) params.set('q', filters.query.trim())
+  if (filters.timezone) params.set('timezone', filters.timezone)
+  return params.toString()
+}
+
+export function loadReportSummary(filters: ReportFilters) {
+  return get<ReportSummary>(`/v1/ui/reports/summary?${reportParams(filters)}`)
+}
+
+export function reportExcelFilename(filters: ReportFilters) {
+  const endpoint = (value: string, end = false) => {
+    // The API end is exclusive; the picker includes the selected second.
+    const date = new Date(new Date(value).getTime() - (end ? 1000 : 0))
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: filters.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+    }).formatToParts(date)
+    const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value
+    const day = `${part('year')}-${part('month')}-${part('day')}`
+    const time = `${part('hour')}-${part('minute')}-${part('second')}`
+    return time === (end ? '23-59-59' : '00-00-00') ? day : `${day}_${time}`
+  }
+  const from = filters.startedFrom ? endpoint(filters.startedFrom) : ''
+  const to = filters.startedBefore ? endpoint(filters.startedBefore, true) : ''
+  const range = from && to ? (from === to ? from : `${from}_den_${to}`)
+    : from ? `tu_${from}` : to ? `den_${to}` : 'tat-ca-thoi-gian'
+  return `bao-cao-${range}.xlsx`
+}
+
+export async function downloadReportExcel(filters: ReportFilters) {
+  const token = getAuthToken()
+  const response = await fetch(`${API_BASE_URL}/v1/ui/reports/export?${reportParams(filters)}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+  if (!response.ok) {
+    if (response.status === 401) {
+      clearAuth()
+      window.dispatchEvent(new CustomEvent('vtp:unauthorized'))
+    }
+    throw new Error('Không thể xuất Excel. Vui lòng thử lại.')
+  }
+  const url = URL.createObjectURL(await response.blob())
+  const link = document.createElement('a')
+  link.href = url
+  link.download = reportExcelFilename(filters)
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+export type WarehouseChoice = { id: string; name: string; enabled: boolean }
+export function loadWarehouseChoices(params: { q?: string; limit?: number; offset?: number } = {}) {
+  const query = new URLSearchParams({ limit: String(params.limit ?? 20), offset: String(params.offset ?? 0) })
+  if (params.q) query.set('q', params.q)
+  return get<{ items: WarehouseChoice[]; total: number; limit: number; offset: number }>(`/v1/ui/warehouses/page?${query}`)
+}
+export function loadWarehouseChoice(id: string) {
+  return get<WarehouseChoice>(`/v1/ui/warehouses/${encodeURIComponent(id)}/choice`)
+}
+
+
+export async function loadReportOptions(warehouseId?: string): Promise<ReportWarehouse[]> {
+  if (!warehouseId) return []
+  // The catalog endpoint returns a single warehouse object.
+  const warehouse = await get<ReportWarehouse>(`/v1/warehouses/${encodeURIComponent(warehouseId)}/catalog`)
+  return [warehouse]
+}

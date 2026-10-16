@@ -31,5 +31,5 @@ export type SessionSummary = {
   snapshotAvailable?: boolean
 }
 
-// Kept as an empty compatibility export for the retired HomePage module.
+// Default station collection.
 export const stations: Station[] = []
